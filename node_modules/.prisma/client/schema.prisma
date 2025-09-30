@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String?
-  name      String?
-  role      Role      @default(USER)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  blogs     Blog[]
-  projects  Project[]
-  aboutMe   AboutMe[]
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  password     String?
+  name         String?
+  profileImage String?
+  role         Role      @default(USER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  blogs        Blog[]
+  projects     Project[]
+  aboutMe      AboutMe[]
 
   @@map("users")
 }
@@ -27,7 +28,7 @@ model Blog {
   title           String
   content         String   @db.Text
   excerpt         String?
-  slug            String?  @unique
+  slug            String   @unique
   published       Boolean  @default(false)
   featured        Boolean  @default(false)
   thumbnail       String?

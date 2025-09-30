@@ -1,6 +1,6 @@
 import { PrismaClient, Role } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -41,11 +41,11 @@ export const authenticateToken = async (
     }
 
     // Verify JWT token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
     // Find user in database
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
+      where: { email: decoded.email },
       select: {
         id: true,
         email: true,
@@ -61,7 +61,6 @@ export const authenticateToken = async (
       });
       return;
     }
-
     // Add user to request object
     req.user = user;
     next();

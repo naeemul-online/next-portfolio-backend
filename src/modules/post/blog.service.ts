@@ -1,15 +1,42 @@
 import { Blog, Prisma } from "@prisma/client";
 import { prisma } from "../../config/db";
+import { calculateReadingTime } from "../../helpers/calculateReadingTime";
+import { generateSlug } from "../../helpers/generateSlug";
 
-const createBlog = async (payload: Prisma.BlogCreateInput): Promise<Blog> => {
+const createBlog = async (
+  payload: Prisma.BlogCreateInput,
+  id: number
+): Promise<Blog> => {
+  let { slug, readingTime, author, ...blogData } = payload;
+
+  if (!slug) {
+    slug = generateSlug(blogData.title);
+  }
+
+  const existingBlog = await prisma.blog.findUnique({ where: { slug } });
+
+  if (existingBlog) {
+    throw new Error("A blog post with this slug already exists");
+  }
+
+  if (!readingTime) {
+    readingTime = calculateReadingTime(blogData.content);
+  }
+
   const result = await prisma.blog.create({
-    data: payload,
+    data: {
+      ...blogData,
+      slug,
+      readingTime,
+      authorId: id,
+    },
     include: {
       author: {
         select: {
           id: true,
           name: true,
           email: true,
+          profileImage: true,
         },
       },
     },
@@ -18,17 +45,17 @@ const createBlog = async (payload: Prisma.BlogCreateInput): Promise<Blog> => {
   return result;
 };
 
-const getAllPosts = async ({
+const getAllBlog = async ({
   page = 1,
-  limit = 10,
+  limit = 5,
   search,
-  isFeatured,
+  featured,
   tags,
 }: {
   page?: number;
   limit?: number;
   search?: string;
-  isFeatured?: boolean;
+  featured?: boolean;
   tags?: string[];
 }) => {
   const skip = (page - 1) * limit;
@@ -41,7 +68,7 @@ const getAllPosts = async ({
           { content: { contains: search, mode: "insensitive" } },
         ],
       },
-      typeof isFeatured === "boolean" && { isFeatured },
+      typeof featured === "boolean" && { featured },
       tags && tags.length > 0 && { tags: { hasEvery: tags } },
     ].filter(Boolean),
   };
@@ -51,7 +78,14 @@ const getAllPosts = async ({
     take: limit,
     where,
     include: {
-      author: true,
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          profileImage: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -107,7 +141,7 @@ const getBlogStat = async () => {
   //     });
   //     const featuredCount = await tx.post.count({
   //       where: {
-  //         isFeatured: true,
+  //         featured: true,
   //       },
   //     });
   //     const topFeatured = await tx.post.findFirst({
@@ -142,7 +176,7 @@ const getBlogStat = async () => {
 
 export const BlogService = {
   createBlog,
-  getAllPosts,
+  getAllBlog,
   getPostById,
   updatePost,
   deletePost,

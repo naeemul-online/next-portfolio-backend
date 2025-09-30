@@ -1,31 +1,39 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../../middleware/checkAuth";
 import { BlogService } from "./blog.service";
 
-const createBlog = async (req: Request, res: Response) => {
+const createBlog = async (req: AuthRequest, res: Response) => {
   try {
-    console.log(req.body);
-    const result = await BlogService.createBlog(req.body);
+    const id = req.user!.id;
+    const result = await BlogService.createBlog(req.body, id);
     res.status(201).json(result);
-  } catch (error) {
+  } catch (error: any) {
+    console.error(error);
+    if (error.message.includes("A blog post with this slug already exists")) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
     res.status(500).send(error);
   }
 };
 
-const getAllPosts = async (req: Request, res: Response) => {
+const getAllBlog = async (req: Request, res: Response) => {
   try {
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 5;
     const search = (req.query.search as string) || "";
-    const isFeatured = req.query.isFeatured
-      ? req.query.isFeatured === "true"
+    const featured = req.query.featured
+      ? req.query.featured === "true"
       : undefined;
     const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
 
-    const result = await BlogService.getAllPosts({
+    const result = await BlogService.getAllBlog({
       page,
       limit,
       search,
-      isFeatured,
+      featured,
       tags,
     });
     res.json(result);
@@ -61,7 +69,7 @@ const getBlogStat = async (req: Request, res: Response) => {
 
 export const BlogController = {
   createBlog,
-  getAllPosts,
+  getAllBlog,
   getPostById,
   updatePost,
   deletePost,
