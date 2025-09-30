@@ -58,17 +58,15 @@ const updateBlog = async (req: Request, res: Response) => {
     res.json(post);
   } catch (error) {
     console.error(error);
-    res
-      .status(404)
-      .json({
-        success: false,
-        status: "Update failed! Something went wrong..",
-      });
+    res.status(404).json({
+      success: false,
+      status: "Update failed! Something went wrong..",
+    });
   }
 };
 
-const deletePost = async (req: Request, res: Response) => {
-  await BlogService.deletePost(Number(req.params.id));
+const deleteBlog = async (req: Request, res: Response) => {
+  await BlogService.deleteBlog(Number(req.params.id));
   res.json({ message: "Post deleted" });
 };
 
@@ -86,6 +84,6 @@ export const BlogController = {
   getAllBlog,
   getBlogById,
   updateBlog,
-  deletePost,
+  deleteBlog,
   getBlogStat,
 };

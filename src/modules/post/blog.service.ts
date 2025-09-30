@@ -136,7 +136,7 @@ const updateBlog = async (id: number, data: Partial<Blog>) => {
   return prisma.blog.update({ where: { id }, data });
 };
 
-const deletePost = async (id: number) => {
+const deleteBlog = async (id: number) => {
   return prisma.blog.delete({ where: { id } });
 };
 
@@ -189,6 +189,6 @@ export const BlogService = {
   getAllBlog,
   getBlogById,
   updateBlog,
-  deletePost,
+  deleteBlog,
   getBlogStat,
 };
