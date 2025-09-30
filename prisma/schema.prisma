@@ -33,6 +33,7 @@ model Blog {
   featured        Boolean  @default(false)
   thumbnail       String?
   tags            String[]
+  views           Int?     @default(0)
   metaTitle       String?
   metaDescription String?
   readingTime     Int?     @default(5)

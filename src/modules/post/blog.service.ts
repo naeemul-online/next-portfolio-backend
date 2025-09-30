@@ -105,24 +105,34 @@ const getAllBlog = async ({
   };
 };
 
-const getPostById = async (id: number) => {
-  //   return await prisma.$transaction(async (tx) => {
-  //     await tx.blog.update({
-  //       where: { id },
-  //       data: {
-  //         views: {
-  //           increment: 1,
-  //         },
-  //       },
-  //     });
-  //     return await tx.blog.findUnique({
-  //       where: { id },
-  //       include: { author: true },
-  //     });
-  //   });
+const getBlogById = async (id: number) => {
+  return await prisma.$transaction(async (tx) => {
+    await tx.blog.update({
+      where: { id },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+    return await tx.blog.findUnique({
+      where: { id },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profileImage: true,
+            role: true,
+          },
+        },
+      },
+    });
+  });
 };
 
-const updatePost = async (id: number, data: Partial<any>) => {
+const updateBlog = async (id: number, data: Partial<Blog>) => {
   return prisma.blog.update({ where: { id }, data });
 };
 
@@ -177,8 +187,8 @@ const getBlogStat = async () => {
 export const BlogService = {
   createBlog,
   getAllBlog,
-  getPostById,
-  updatePost,
+  getBlogById,
+  updateBlog,
   deletePost,
   getBlogStat,
 };

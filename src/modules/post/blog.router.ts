@@ -13,8 +13,8 @@ router.get(
 router.post("/", authenticateToken, requireAdmin, BlogController.createBlog);
 
 router.get("/", BlogController.getAllBlog);
-router.get("/:id", BlogController.getPostById);
-router.patch("/:id", requireAdmin, BlogController.updatePost);
-router.delete("/:id", requireAdmin, BlogController.deletePost);
+router.get("/:id", BlogController.getBlogById);
+router.patch("/:id", BlogController.updateBlog);
+router.delete("/:id", BlogController.deletePost);
 
 export const blogRouter = router;

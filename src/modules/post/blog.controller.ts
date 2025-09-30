@@ -42,15 +42,29 @@ const getAllBlog = async (req: Request, res: Response) => {
   }
 };
 
-const getPostById = async (req: Request, res: Response) => {
-  //   const post = await BlogService.getPostById(Number(req.params.id));
-  //   if (!post) return res.status(404).json({ error: "Post not found" });
-  //   res.json(post);
+const getBlogById = async (req: Request, res: Response) => {
+  try {
+    const result = await BlogService.getBlogById(Number(req.params.id));
+    res.status(201).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(404).json({ success: false, status: "Post not found!" });
+  }
 };
 
-const updatePost = async (req: Request, res: Response) => {
-  const post = await BlogService.updatePost(Number(req.params.id), req.body);
-  res.json(post);
+const updateBlog = async (req: Request, res: Response) => {
+  try {
+    const post = await BlogService.updateBlog(Number(req.params.id), req.body);
+    res.json(post);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(404)
+      .json({
+        success: false,
+        status: "Update failed! Something went wrong..",
+      });
+  }
 };
 
 const deletePost = async (req: Request, res: Response) => {
@@ -70,8 +84,8 @@ const getBlogStat = async (req: Request, res: Response) => {
 export const BlogController = {
   createBlog,
   getAllBlog,
-  getPostById,
-  updatePost,
+  getBlogById,
+  updateBlog,
   deletePost,
   getBlogStat,
 };
