@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String?
+  name      String?
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  blogs     Blog[]
+  projects  Project[]
+  aboutMe   AboutMe[]
+
+  @@map("users")
+}
+
+model Blog {
+  id              Int      @id @default(autoincrement())
+  title           String
+  content         String   @db.Text
+  excerpt         String?
+  slug            String?  @unique
+  published       Boolean  @default(false)
+  featured        Boolean  @default(false)
+  thumbnail       String?
+  tags            String[]
+  metaTitle       String?
+  metaDescription String?
+  readingTime     Int?     @default(5)
+  authorId        Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("blogs")
+}
+
+model Project {
+  id           Int           @id @default(autoincrement())
+  title        String
+  description  String        @db.Text
+  shortDesc    String?
+  thumbnail    String?
+  images       String[]
+  technologies String[]
+  features     String[]
+  liveUrl      String?
+  githubUrl    String?
+  projectUrl   String?
+  status       ProjectStatus @default(COMPLETED)
+  featured     Boolean       @default(false)
+  order        Int           @default(0)
+  authorId     Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("projects")
+}
+
+model AboutMe {
+  id           Int     @id @default(autoincrement())
+  name         String
+  title        String
+  bio          String  @db.Text
+  email        String
+  phone        String?
+  location     String?
+  website      String?
+  profileImage String?
+  resume       String?
+
+  // Social Links
+  linkedin  String?
+  github    String?
+  twitter   String?
+  instagram String?
+
+  // Skills and Experience
+  skills     Json? // Store as JSON array
+  experience Json? // Store work experience as JSON
+  education  Json? // Store education as JSON
+
+  authorId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("about_me")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCK
+}
+
+enum ProjectStatus {
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
