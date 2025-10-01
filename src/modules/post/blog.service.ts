@@ -141,47 +141,47 @@ const deleteBlog = async (id: number) => {
 };
 
 const getBlogStat = async () => {
-  //   return await prisma.$transaction(async (tx) => {
-  //     const aggregates = await tx.blog.aggregate({
-  //       _count: true,
-  //       _sum: { views: true },
-  //       _avg: { views: true },
-  //       _max: { views: true },
-  //       _min: { views: true },
-  //     });
-  //     const featuredCount = await tx.post.count({
-  //       where: {
-  //         featured: true,
-  //       },
-  //     });
-  //     const topFeatured = await tx.post.findFirst({
-  //       where: { isFeatured: true },
-  //       orderBy: { views: "desc" },
-  //     });
-  //     const lastWeek = new Date();
-  //     lastWeek.setDate(lastWeek.getDate() - 7);
-  //     const lastWeekPostCount = await tx.post.count({
-  //       where: {
-  //         createdAt: {
-  //           gte: lastWeek,
-  //         },
-  //       },
-  //     });
-  //     return {
-  //       stats: {
-  //         totalPosts: aggregates._count ?? 0,
-  //         totalViews: aggregates._sum.views ?? 0,
-  //         avgViews: aggregates._avg.views ?? 0,
-  //         minViews: aggregates._min.views ?? 0,
-  //         maxViews: aggregates._max.views ?? 0,
-  //       },
-  //       featured: {
-  //         count: featuredCount,
-  //         topPost: topFeatured,
-  //       },
-  //       lastWeekPostCount,
-  //     };
-  //   });
+  return await prisma.$transaction(async (tx) => {
+    const aggregates = await tx.blog.aggregate({
+      _count: true,
+      _sum: { views: true },
+      _avg: { views: true },
+      _max: { views: true },
+      _min: { views: true },
+    });
+    const featuredCount = await tx.blog.count({
+      where: {
+        featured: true,
+      },
+    });
+    const topFeatured = await tx.blog.findFirst({
+      where: { featured: true },
+      orderBy: { views: "desc" },
+    });
+    const lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 7);
+    const lastWeekPostCount = await tx.blog.count({
+      where: {
+        createdAt: {
+          gte: lastWeek,
+        },
+      },
+    });
+    return {
+      stats: {
+        totalPosts: aggregates._count ?? 0,
+        totalViews: aggregates._sum.views ?? 0,
+        avgViews: aggregates._avg.views ?? 0,
+        minViews: aggregates._min.views ?? 0,
+        maxViews: aggregates._max.views ?? 0,
+      },
+      featured: {
+        count: featuredCount,
+        topPost: topFeatured,
+      },
+      lastWeekPostCount,
+    };
+  });
 };
 
 export const BlogService = {

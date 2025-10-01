@@ -19,6 +19,15 @@ const createBlog = async (req: AuthRequest, res: Response) => {
   }
 };
 
+const getBlogStat = async (req: Request, res: Response) => {
+  try {
+    const result = await BlogService.getBlogStat();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch stats", details: err });
+  }
+};
+
 const getAllBlog = async (req: Request, res: Response) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -66,16 +75,11 @@ const updateBlog = async (req: Request, res: Response) => {
 };
 
 const deleteBlog = async (req: Request, res: Response) => {
-  await BlogService.deleteBlog(Number(req.params.id));
-  res.json({ message: "Post deleted" });
-};
-
-const getBlogStat = async (req: Request, res: Response) => {
   try {
-    const result = await BlogService.getBlogStat();
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch stats", details: err });
+    await BlogService.deleteBlog(Number(req.params.id));
+    res.send(200).json({ status: true, message: "Post deleted" });
+  } catch (error) {
+    res.json({ status: false, details: error });
   }
 };
 
