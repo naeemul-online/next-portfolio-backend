@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import { authRouter } from "./modules/auth/auth.routes";
-import { blogRouter } from "./modules/post/blog.router";
+import { blogRouter } from "./modules/blog/blog.router";
 import { userRouter } from "./modules/user/user.routes";
 
 const app = express();
@@ -16,7 +16,7 @@ app.use(express.json()); // Parse incoming JSON requests
 
 app.use(
   cors({
-    origin: "http://localhost:5000",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );

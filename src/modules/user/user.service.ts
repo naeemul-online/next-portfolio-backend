@@ -14,7 +14,7 @@ const createUser = async (payload: Prisma.UserCreateInput): Promise<User> => {
   }
 
   const saltRound = 12;
-  const hashedPassword = await bcrypt.hash(password, saltRound);
+  const hashedPassword = await bcrypt.hash(password as string, saltRound);
 
   const newUser = await prisma.user.create({
     data: {
