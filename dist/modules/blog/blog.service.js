@@ -24,8 +24,8 @@ exports.BlogService = void 0;
 const db_1 = require("../../config/db");
 const calculateReadingTime_1 = require("../../helpers/calculateReadingTime");
 const generateSlug_1 = require("../../helpers/generateSlug");
-const createBlog = (payload, id) => __awaiter(void 0, void 0, void 0, function* () {
-    let { slug, readingTime, author } = payload, blogData = __rest(payload, ["slug", "readingTime", "author"]);
+const createBlog = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    let { slug, readingTime } = payload, blogData = __rest(payload, ["slug", "readingTime"]);
     if (!slug) {
         slug = (0, generateSlug_1.generateSlug)(blogData.title);
     }
@@ -38,7 +38,7 @@ const createBlog = (payload, id) => __awaiter(void 0, void 0, void 0, function* 
     }
     const result = yield db_1.prisma.blog.create({
         data: Object.assign(Object.assign({}, blogData), { slug,
-            readingTime, authorId: id }),
+            readingTime }),
         include: {
             author: {
                 select: {

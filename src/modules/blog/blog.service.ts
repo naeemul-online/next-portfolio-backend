@@ -3,11 +3,8 @@ import { prisma } from "../../config/db";
 import { calculateReadingTime } from "../../helpers/calculateReadingTime";
 import { generateSlug } from "../../helpers/generateSlug";
 
-const createBlog = async (
-  payload: Prisma.BlogCreateInput,
-  id: number
-): Promise<Blog> => {
-  let { slug, readingTime, author, ...blogData } = payload;
+const createBlog = async (payload: Prisma.BlogCreateInput): Promise<Blog> => {
+  let { slug, readingTime, ...blogData } = payload;
 
   if (!slug) {
     slug = generateSlug(blogData.title);
@@ -28,7 +25,6 @@ const createBlog = async (
       ...blogData,
       slug,
       readingTime,
-      authorId: id,
     },
     include: {
       author: {

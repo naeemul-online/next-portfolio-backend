@@ -4,8 +4,7 @@ import { BlogService } from "./blog.service";
 
 const createBlog = async (req: AuthRequest, res: Response) => {
   try {
-    const id = req.user!.id;
-    const result = await BlogService.createBlog(req.body, id);
+    const result = await BlogService.createBlog(req.body);
     res.status(201).json(result);
   } catch (error: any) {
     console.error(error);

@@ -13,8 +13,7 @@ exports.BlogController = void 0;
 const blog_service_1 = require("./blog.service");
 const createBlog = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const id = req.user.id;
-        const result = yield blog_service_1.BlogService.createBlog(req.body, id);
+        const result = yield blog_service_1.BlogService.createBlog(req.body);
         res.status(201).json(result);
     }
     catch (error) {

@@ -10,7 +10,7 @@ router.get(
   BlogController.getBlogStat
 );
 
-router.post("/", authenticateToken, requireAdmin, BlogController.createBlog);
+router.post("/", BlogController.createBlog);
 
 router.get("/", BlogController.getAllBlog);
 
