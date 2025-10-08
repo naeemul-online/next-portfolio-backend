@@ -60,7 +60,11 @@ const getAllBlog = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 const getBlogById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield blog_service_1.BlogService.getBlogById(Number(req.params.id));
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) {
+            return res.status(400).json({ error: "Invalid blog ID" });
+        }
+        const result = yield blog_service_1.BlogService.getBlogById(id);
         res.status(201).json(result);
     }
     catch (error) {

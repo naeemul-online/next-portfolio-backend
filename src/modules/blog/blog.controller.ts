@@ -52,7 +52,11 @@ const getAllBlog = async (req: Request, res: Response) => {
 
 const getBlogById = async (req: Request, res: Response) => {
   try {
-    const result = await BlogService.getBlogById(Number(req.params.id));
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid blog ID" });
+    }
+    const result = await BlogService.getBlogById(id);
     res.status(201).json(result);
   } catch (error) {
     console.error(error);

@@ -18,7 +18,8 @@ app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json()); // Parse incoming JSON requests
 app.use((0, cors_1.default)({
     origin: process.env.FRONTEND_URL,
-    credentials: true,
+    methods: ["GET", "POST"],
+    // credentials: true,
 }));
 app.use("/api/v1/user", user_routes_1.userRouter);
 app.use("/api/v1/blog", blog_router_1.blogRouter);
